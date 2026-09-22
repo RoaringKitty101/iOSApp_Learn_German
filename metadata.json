@@ -1,0 +1,6 @@
+{
+  "name": "Deutsch30: 30-Day German Mastery",
+  "description": "A 30-day German learning plan with 7-day, 15-day, and 30-day milestones, interactive exercises, speech audio, daily challenges, offline mode, and competitive social leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
