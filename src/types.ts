@@ -105,4 +105,5 @@ export interface UserProgress {
   currentLeague: LeagueTier;
   offlineSyncQueue: { action: string; day?: number; xp: number; timestamp: number }[];
   masteredVocab: string[];
+  dailyActivity?: Record<string, { xp: number; lessons: number; minutes: number }>;
 }

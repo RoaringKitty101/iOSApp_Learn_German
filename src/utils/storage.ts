@@ -5,6 +5,23 @@ const PROGRESS_STORAGE_KEY = 'deutsch30_user_progress_v1';
 const CHALLENGES_STORAGE_KEY = 'deutsch30_daily_challenges_v1';
 const OFFLINE_CACHE_KEY = 'deutsch30_offline_cache_v1';
 
+function getInitialDailyActivity(): Record<string, { xp: number; lessons: number; minutes: number }> {
+  const result: Record<string, { xp: number; lessons: number; minutes: number }> = {};
+  const today = new Date();
+  
+  const d2 = new Date(today);
+  d2.setDate(today.getDate() - 2);
+  result[d2.toISOString().split('T')[0]] = { xp: 50, lessons: 1, minutes: 15 };
+  
+  const d1 = new Date(today);
+  d1.setDate(today.getDate() - 1);
+  result[d1.toISOString().split('T')[0]] = { xp: 75, lessons: 1, minutes: 20 };
+  
+  result[today.toISOString().split('T')[0]] = { xp: 55, lessons: 1, minutes: 15 };
+
+  return result;
+}
+
 export const DEFAULT_USER_PROGRESS: UserProgress = {
   completedDays: [1], // Start with Day 1 completed so user sees initial traction immediately!
   currentStreak: 3,
@@ -26,7 +43,8 @@ export const DEFAULT_USER_PROGRESS: UserProgress = {
   avatar: '🚀',
   currentLeague: 'Gold',
   offlineSyncQueue: [],
-  masteredVocab: ['Hallo', 'Guten Tag', 'Danke', 'Bitte']
+  masteredVocab: ['Hallo', 'Guten Tag', 'Danke', 'Bitte'],
+  dailyActivity: getInitialDailyActivity()
 };
 
 export function loadUserProgress(): UserProgress {
@@ -35,7 +53,11 @@ export function loadUserProgress(): UserProgress {
     const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
     if (!raw) return DEFAULT_USER_PROGRESS;
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_USER_PROGRESS, ...parsed };
+    const loaded = { ...DEFAULT_USER_PROGRESS, ...parsed };
+    if (!loaded.dailyActivity || Object.keys(loaded.dailyActivity).length === 0) {
+      loaded.dailyActivity = getInitialDailyActivity();
+    }
+    return loaded;
   } catch (e) {
     console.error('Failed to load progress from localStorage', e);
     return DEFAULT_USER_PROGRESS;

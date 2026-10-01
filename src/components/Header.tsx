@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame, Heart, Sparkles, Wifi, WifiOff, Volume2, VolumeX, Shield, Award, BookOpen, Users, Compass } from 'lucide-react';
 import { UserProgress } from '../types';
 import { sounds } from '../utils/audio';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   progress: UserProgress;
@@ -40,13 +41,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1.5 text-xs text-amber-300 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <WifiOff className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span><strong>Offline-Modus aktiv:</strong> Alle 30 Tage & Lektionen sind lokal gespeichert. Fortschritt wird automatisch synchronisiert.</span>
+            <span><strong>Offline Mode Active:</strong> All 30 days & lessons are cached on device. Progress syncs automatically upon reconnecting.</span>
           </div>
           <button 
             onClick={() => setIsOffline(false)} 
             className="text-xs bg-amber-500/20 hover:bg-amber-500/30 px-2 py-0.5 rounded text-amber-200 font-medium transition cursor-pointer"
           >
-            Online gehen
+            Go Online
           </button>
         </div>
       )}
@@ -71,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
-                30-Tage Meisterplan • Tag {Math.min(30, completedCount + 1)} von 30
+                30-Day Master Plan • Day {Math.min(30, completedCount + 1)} of 30
               </p>
             </div>
           </div>
@@ -81,17 +82,17 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Streak */}
           <div 
-            title={`Aktuelle Serie: ${progress.currentStreak} Tage`}
+            title={`Current Streak: ${progress.currentStreak} day(s)`}
             className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 px-2.5 py-1 rounded-full text-xs font-bold text-amber-400 transition"
           >
             <Flame className="w-4 h-4 fill-amber-500 text-amber-400 animate-bounce" style={{ animationDuration: '2s' }} />
             <span>{progress.currentStreak}</span>
-            <span className="text-[10px] text-slate-400 hidden md:inline">Tage</span>
+            <span className="text-[10px] text-slate-400 hidden md:inline">Days</span>
           </div>
 
           {/* Hearts */}
           <div 
-            title={`${progress.hearts} von ${progress.maxHearts} Leben übrig`}
+            title={`${progress.hearts} of ${progress.maxHearts} hearts remaining`}
             className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/60 px-2.5 py-1 rounded-full text-xs font-bold text-rose-400"
           >
             <Heart className="w-4 h-4 fill-rose-500 text-rose-400" />
@@ -100,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* XP Gems */}
           <div 
-            title={`${progress.totalXp} Gesamt-XP gesammelt`}
+            title={`${progress.totalXp} Total XP earned`}
             className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/60 px-2.5 py-1 rounded-full text-xs font-bold text-emerald-400"
           >
             <Sparkles className="w-4 h-4 fill-emerald-500 text-emerald-400" />
@@ -111,8 +112,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Daily Quests button */}
           <button
             onClick={onOpenChallenges}
-            title="Tägliche Herausforderungen öffnen"
-            className="relative flex items-center justify-center p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 transition hover:scale-105"
+            title="Open Daily Quests & Challenges"
+            className="relative flex items-center justify-center p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 transition hover:scale-105 cursor-pointer"
           >
             <Award className="w-4 h-4" />
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-ping" />
@@ -122,8 +123,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Offline Status & Manager */}
           <button
             onClick={onOpenOfflineManager}
-            title={isOffline ? "Offline-Modus aktiv - Klicken zum Verwalten" : "Online - Alle Lektionen offline verfügbar"}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition ${
+            title={isOffline ? "Offline mode active - click to manage" : "Online - All lessons ready for offline learning"}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition cursor-pointer ${
               isOffline 
                 ? 'bg-amber-950/60 border-amber-600 text-amber-300' 
                 : 'bg-emerald-950/40 border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/50'
@@ -137,16 +138,19 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <>
                 <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">Offline bereit</span>
+                <span className="hidden sm:inline">Offline Ready</span>
               </>
             )}
           </button>
 
+          {/* PWA Install Button */}
+          <PWAInstallButton />
+
           {/* Sound Toggle */}
           <button
             onClick={onToggleSound}
-            title={progress.soundEnabled ? "Audio stummschalten" : "Audio aktivieren"}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition"
+            title={progress.soundEnabled ? "Mute pronunciation & sound effects" : "Enable sound effects"}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition cursor-pointer"
           >
             {progress.soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
           </button>
@@ -164,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({
           }`}
         >
           <Compass className="w-4 h-4" />
-          <span>30-Tage Lernpfad</span>
+          <span>30-Day Roadmap</span>
           <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
             activeTab === 'roadmap' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-slate-400'
           }`}>
@@ -181,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
           }`}
         >
           <Shield className="w-4 h-4" />
-          <span>3 Meilensteine (7, 15, 30 Tage)</span>
+          <span>3 Milestones (7, 15, 30 Days)</span>
         </button>
 
         <button
@@ -193,11 +197,11 @@ export const Header: React.FC<HeaderProps> = ({
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Wortschatz Blitz</span>
+          <span>Vocab Flashcards</span>
           <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
             activeTab === 'flashcards' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-slate-400'
           }`}>
-            {progress.masteredVocab.length} gemerkt
+            {progress.masteredVocab.length} Mastered
           </span>
         </button>
 
@@ -210,7 +214,7 @@ export const Header: React.FC<HeaderProps> = ({
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>Bestenliste</span>
+          <span>Leaderboard</span>
           <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 rounded">
             {progress.currentLeague}
           </span>
@@ -224,7 +228,7 @@ export const Header: React.FC<HeaderProps> = ({
               : 'text-slate-300 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <span>Grammatik Spickzettel</span>
+          <span>Grammar Cheat Sheet</span>
         </button>
       </div>
     </header>

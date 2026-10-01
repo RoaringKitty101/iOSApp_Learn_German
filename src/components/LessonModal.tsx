@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, 
   Heart, 
@@ -15,11 +15,13 @@ import {
   Check,
   Flame,
   VolumeX,
-  Shield
+  Shield,
+  Mic
 } from 'lucide-react';
 import { DayPlan, Exercise, UserProgress } from '../types';
 import { sounds, speakGerman } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
+import { RecordCompare } from './RecordCompare';
 
 interface LessonModalProps {
   dayPlan: DayPlan;
@@ -36,7 +38,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   onCompleteLesson,
   onOpenCertificate
 }) => {
-  const [activeTab, setActiveTab] = useState<'study' | 'practice'>('practice');
+  const [activeTab, setActiveTab] = useState<'study' | 'practice' | 'pronounce'>('practice');
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<string | string[]>('');
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
@@ -47,6 +49,43 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   const [heartsLeft, setHeartsLeft] = useState(userProgress.hearts);
   const [isCompleted, setIsCompleted] = useState(false);
   const [speakingWord, setSpeakingWord] = useState<string | null>(null);
+  const [showExerciseRecorder, setShowExerciseRecorder] = useState(false);
+  const [activePronouncePhrase, setActivePronouncePhrase] = useState<{ de: string; en: string } | null>(null);
+
+  // Compile list of German phrases available in this lesson for pronunciation practice
+  const pronunciationPhrases = useMemo(() => {
+    const list: { de: string; en: string; context?: string }[] = [];
+
+    // Add vocabulary
+    dayPlan.vocabulary.forEach(v => {
+      list.push({ de: v.de, en: v.en, context: v.example });
+    });
+
+    // Add grammar example sentences
+    dayPlan.grammarNote.examples.forEach(ex => {
+      if (!list.some(item => item.de === ex.de)) {
+        list.push({ de: ex.de, en: ex.en });
+      }
+    });
+
+    // Add exercise audio texts
+    dayPlan.exercises.forEach(ex => {
+      if (ex.audioText && !list.some(item => item.de === ex.audioText)) {
+        list.push({ de: ex.audioText, en: ex.prompt });
+      }
+    });
+
+    // Ensure lesson German title is included
+    if (!list.some(item => item.de === dayPlan.germanTitle)) {
+      list.unshift({ de: dayPlan.germanTitle, en: dayPlan.title });
+    }
+
+    return list;
+  }, [dayPlan]);
+
+  const handleBonusXp = (xpBonus: number) => {
+    setScore(prev => prev + xpBonus);
+  };
 
   // Match Pairs State
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
@@ -65,6 +104,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     setSelectedPairLeft(null);
     setSelectedPairRight(null);
     setMatchedPairs([]);
+    setShowExerciseRecorder(false);
 
     if (currentExercise.type === 'sentence-scramble') {
       const tokens = [...(currentExercise.options || [])];
@@ -189,44 +229,59 @@ export const LessonModal: React.FC<LessonModalProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              title="Lektion schließen"
-              className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
+              title="Close lesson"
+              className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded">
-                  Tag {dayPlan.day}
+                  Day {dayPlan.day}
                 </span>
                 <span className="text-xs text-slate-400 font-semibold hidden sm:inline">
-                  {dayPlan.germanTitle}
+                  {dayPlan.title} • {dayPlan.germanTitle}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Mode Switcher Pills */}
-          <div className="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+          <div className="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 overflow-x-auto no-scrollbar">
             <button
               onClick={() => { sounds.playClick(); setActiveTab('practice'); }}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                 activeTab === 'practice'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Übungen
+              Exercises
             </button>
             <button
               onClick={() => { sounds.playClick(); setActiveTab('study'); }}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                 activeTab === 'study'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Vorbereitung ({dayPlan.vocabulary.length})
+              Study Notes ({dayPlan.vocabulary.length})
+            </button>
+            <button
+              onClick={() => { 
+                sounds.playClick(); 
+                setActivePronouncePhrase(null);
+                setActiveTab('pronounce'); 
+              }}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'pronounce'
+                  ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-sm'
+                  : 'text-rose-300/80 hover:text-rose-300'
+              }`}
+            >
+              <Mic className="w-3.5 h-3.5" />
+              <span>Record & Compare</span>
             </button>
           </div>
 
@@ -257,13 +312,13 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               </div>
 
               <span className="text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-1">
-                Lektion Abgeschlossen!
+                Lesson Completed!
               </span>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Ausgezeichnete Leistung!
+                Outstanding Work!
               </h3>
               <p className="text-sm text-slate-300 max-w-md mt-2">
-                Du hast <strong>Tag {dayPlan.day}: {dayPlan.germanTitle}</strong> erfolgreich gemeistert.
+                You have successfully mastered <strong>Day {dayPlan.day}: {dayPlan.title}</strong> ({dayPlan.germanTitle}).
               </p>
 
               {/* Reward stats */}
@@ -273,7 +328,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <Sparkles className="w-5 h-5 text-amber-400" />
                     <span>+{dayPlan.xpReward}</span>
                   </div>
-                  <div className="text-xs text-slate-400 font-semibold mt-1">XP gesammelt</div>
+                  <div className="text-xs text-slate-400 font-semibold mt-1">XP Earned</div>
                 </div>
 
                 <div className="bg-slate-800/70 border border-slate-700/60 p-4 rounded-2xl">
@@ -281,7 +336,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                     <span>100%</span>
                   </div>
-                  <div className="text-xs text-slate-400 font-semibold mt-1">Genauigkeit</div>
+                  <div className="text-xs text-slate-400 font-semibold mt-1">Accuracy</div>
                 </div>
               </div>
 
@@ -292,10 +347,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <Shield className="w-8 h-8 text-amber-400 shrink-0" />
                     <div>
                       <div className="text-xs font-black uppercase text-amber-400">
-                        Meilenstein {dayPlan.milestone} Boss besiegt!
+                        Milestone {dayPlan.milestone} Boss Cleared!
                       </div>
                       <div className="text-sm font-bold text-white">
-                        Dein offizielles Zertifikat ist nun freigeschaltet.
+                        Your official milestone achievement certificate is now unlocked.
                       </div>
                     </div>
                   </div>
@@ -307,7 +362,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     className="mt-3 w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Award className="w-4 h-4" />
-                    <span>Zertifikat anzeigen & herunterladen</span>
+                    <span>View & Print Certificate</span>
                   </button>
                 </div>
               )}
@@ -316,7 +371,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 onClick={onClose}
                 className="w-full max-w-sm py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Fortfahren</span>
+                <span>Continue</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -327,7 +382,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               <div className="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl">
                 <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-1">
                   <BookOpen className="w-4 h-4" />
-                  <span>Grammatik-Lektion: {dayPlan.grammarNote.title}</span>
+                  <span>Grammar Focus: {dayPlan.grammarNote.title}</span>
                 </div>
                 <h4 className="text-base font-bold text-white mb-2">
                   {dayPlan.grammarNote.summary}
@@ -342,7 +397,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 </ul>
 
                 <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-bold text-slate-400 mb-2 uppercase">Beispielsätze (Examples):</div>
+                  <div className="text-[11px] font-bold text-slate-400 mb-2 uppercase">Example Sentences:</div>
                   <div className="space-y-2">
                     {dayPlan.grammarNote.examples.map((ex, idx) => (
                       <div key={idx} className="flex items-center justify-between gap-3 text-xs">
@@ -350,12 +405,26 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                           <div className="font-bold text-amber-300">{ex.de}</div>
                           <div className="text-slate-400 text-[11px]">{ex.en}</div>
                         </div>
-                        <button
-                          onClick={() => handleSpeak(ex.de)}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleSpeak(ex.de)}
+                            title="Listen"
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              sounds.playClick();
+                              setActivePronouncePhrase({ de: ex.de, en: ex.en });
+                              setActiveTab('pronounce');
+                            }}
+                            title="Record & Compare"
+                            className="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 hover:text-white transition cursor-pointer"
+                          >
+                            <Mic className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -365,8 +434,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               {/* Vocabulary Deck */}
               <div>
                 <h4 className="text-sm font-bold text-white mb-3 flex items-center justify-between">
-                  <span>Wichtiger Wortschatz ({dayPlan.vocabulary.length} Vokabeln)</span>
-                  <span className="text-xs text-slate-400">Klicke zum Anhören</span>
+                  <span>Core Vocabulary ({dayPlan.vocabulary.length} words)</span>
+                  <span className="text-xs text-slate-400">Click card to listen or mic to record</span>
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {dayPlan.vocabulary.map((vocab, idx) => (
@@ -400,8 +469,31 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                         </div>
                       </div>
 
-                      <div className="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-amber-300 group-hover:bg-amber-500/20 transition shrink-0">
-                        <Volume2 className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSpeak(vocab.de);
+                          }}
+                          title="Listen"
+                          className="w-7 h-7 rounded-lg bg-slate-700/60 hover:bg-slate-700 flex items-center justify-center text-slate-400 group-hover:text-amber-300 transition cursor-pointer"
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sounds.playClick();
+                            setActivePronouncePhrase({ de: vocab.de, en: vocab.en });
+                            setActiveTab('pronounce');
+                          }}
+                          title="Record & Compare"
+                          className="w-7 h-7 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 flex items-center justify-center text-rose-300 hover:text-white transition cursor-pointer"
+                        >
+                          <Mic className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -414,9 +506,36 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
                 >
                   <Play className="w-4 h-4 fill-slate-950" />
-                  <span>Jetzt interaktive Übungen starten</span>
+                  <span>Start Interactive Exercises</span>
                 </button>
               </div>
+            </div>
+          ) : activeTab === 'pronounce' ? (
+            /* Dedicated Record & Compare Studio */
+            <div className="space-y-4">
+              <div className="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div>
+                  <span className="font-extrabold text-white text-sm block">
+                    Day {dayPlan.day} Pronunciation Studio
+                  </span>
+                  <span className="text-slate-400">
+                    Practice speaking core vocabulary words and phrases with browser SpeechRecognition and real-time phonetic feedback.
+                  </span>
+                </div>
+                <button
+                  onClick={() => { sounds.playClick(); setActiveTab('practice'); }}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 transition cursor-pointer self-start sm:self-auto shadow-sm"
+                >
+                  Back to Exercises
+                </button>
+              </div>
+
+              <RecordCompare
+                phrases={pronunciationPhrases}
+                initialPhrase={activePronouncePhrase?.de}
+                initialEnglish={activePronouncePhrase?.en}
+                onBonusXp={handleBonusXp}
+              />
             </div>
           ) : (
             /* Interactive Exercise Question */
@@ -425,11 +544,11 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                 {/* Exercise Type Indicator & Prompt */}
                 <div>
                   <div className="flex items-center justify-between text-xs text-slate-400 font-semibold mb-2">
-                    <span>Frage {currentExerciseIndex + 1} von {dayPlan.exercises.length}</span>
+                    <span>Question {currentExerciseIndex + 1} of {dayPlan.exercises.length}</span>
                     {correctStreak > 1 && (
                       <span className="text-amber-400 font-extrabold flex items-center gap-1">
                         <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                        <span>{correctStreak}er Serie!</span>
+                        <span>{correctStreak} in a row!</span>
                       </span>
                     )}
                   </div>
@@ -439,27 +558,53 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   </h3>
 
                   {currentExercise.audioText && (
-                    <div className="mt-3 flex items-center gap-3">
+                    <div className="mt-3 flex flex-wrap items-center gap-2.5">
                       <button
                         onClick={() => handleSpeak(currentExercise.audioText!)}
-                        className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-bold text-xs flex items-center gap-2 transition cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-bold text-xs flex items-center gap-2 transition cursor-pointer"
                       >
                         <Volume2 className="w-4 h-4" />
-                        <span>Anhören (German Audio)</span>
+                        <span>Listen (German Audio)</span>
                       </button>
                       <button
                         onClick={() => speakGerman(currentExercise.audioText!, 0.7)}
                         className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer"
-                        title="Langsam sprechen (0.7x)"
+                        title="Slow pronunciation (0.7x)"
                       >
-                        0.7x Langsam
+                        0.7x Slow
                       </button>
+                      <button
+                        onClick={() => {
+                          sounds.playClick();
+                          setShowExerciseRecorder(prev => !prev);
+                        }}
+                        className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition cursor-pointer ${
+                          showExerciseRecorder
+                            ? 'bg-rose-500/20 border-rose-500 text-rose-300'
+                            : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                        }`}
+                      >
+                        <Mic className="w-4 h-4" />
+                        <span>{showExerciseRecorder ? 'Hide Pronunciation' : 'Record & Compare'}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Inline Record & Compare Drawer */}
+                  {showExerciseRecorder && currentExercise.audioText && (
+                    <div className="mt-4 animate-in fade-in zoom-in-95 duration-200">
+                      <RecordCompare
+                        initialPhrase={currentExercise.audioText}
+                        initialEnglish={currentExercise.prompt}
+                        compact={true}
+                        onBonusXp={handleBonusXp}
+                      />
                     </div>
                   )}
 
                   {currentExercise.contextSentence && (
                     <div className="mt-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 text-xs italic">
-                      Kontext: "{currentExercise.contextSentence}"
+                      Context: "{currentExercise.contextSentence}"
                     </div>
                   )}
                 </div>
@@ -504,7 +649,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     <div className="min-h-16 p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex flex-wrap items-center gap-2">
                       {selectedTokens.length === 0 ? (
                         <span className="text-xs text-slate-500 italic">
-                          Tippe auf die Wörter unten, um den Satz zusammenzustellen...
+                          Tap words below to arrange into the correct sentence...
                         </span>
                       ) : (
                         selectedTokens.map((token, idx) => (
@@ -567,7 +712,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     {/* Left Column (German) */}
                     <div className="space-y-2.5">
-                      <div className="text-xs font-bold text-slate-400 mb-1">Deutsch</div>
+                      <div className="text-xs font-bold text-slate-400 mb-1">German</div>
                       {currentExercise.pairs.map((p, idx) => {
                         const isMatched = matchedPairs.includes(p.left);
                         const isSelected = selectedPairLeft === p.left;
@@ -595,7 +740,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
 
                     {/* Right Column (English) */}
                     <div className="space-y-2.5">
-                      <div className="text-xs font-bold text-slate-400 mb-1">Englisch</div>
+                      <div className="text-xs font-bold text-slate-400 mb-1">English</div>
                       {currentExercise.pairs.map((p, idx) => {
                         const isMatched = matchedPairs.includes(p.right);
                         const isSelected = selectedPairRight === p.right;
@@ -666,14 +811,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({
               {feedback === 'idle' ? (
                 <div className="text-xs text-slate-400 flex items-center gap-2">
                   <HelpCircle className="w-4 h-4 text-slate-500" />
-                  <span>Wähle oder erstelle deine Antwort und klicke auf "Prüfen".</span>
+                  <span>Select or arrange your answer, then click "Check Answer".</span>
                 </div>
               ) : feedback === 'correct' ? (
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-extrabold text-sm text-emerald-300">
-                      Richtig! Ausgezeichnet!
+                      Correct! Great job!
                     </div>
                     <div className="text-xs text-emerald-200/80 mt-0.5">
                       {currentExercise?.explanation}
@@ -685,7 +830,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   <XCircle className="w-6 h-6 text-rose-400 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-extrabold text-sm text-rose-300">
-                      Fast richtig! Richtige Antwort: {Array.isArray(currentExercise?.correctAnswer) ? currentExercise?.correctAnswer.join(' ') : currentExercise?.correctAnswer}
+                      Almost! Correct answer: {Array.isArray(currentExercise?.correctAnswer) ? currentExercise?.correctAnswer.join(' ') : currentExercise?.correctAnswer}
                     </div>
                     <div className="text-xs text-rose-200/80 mt-0.5">
                       {currentExercise?.explanation}
@@ -708,7 +853,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     }
                     className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 disabled:hover:bg-amber-500 text-slate-950 font-extrabold text-xs transition shadow-md cursor-pointer"
                   >
-                    Antwort prüfen
+                    Check Answer
                   </button>
                 ) : (
                   <button
@@ -719,7 +864,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                         : 'bg-rose-500 hover:bg-rose-400 text-white'
                     }`}
                   >
-                    <span>Weiter</span>
+                    <span>Continue</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 )}

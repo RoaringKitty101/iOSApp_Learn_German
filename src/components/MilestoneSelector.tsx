@@ -29,57 +29,57 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
   const milestonesData = [
     {
       id: 1 as MilestoneId,
-      days: "Tag 1 – 7",
+      days: "Days 1 – 7",
       targetDay: 7,
       level: "A1.1",
-      title: "Grundlagen & Hallo",
-      subtitle: "Foundations & Daily Survival",
-      description: "Master German greetings, Umlauts (ä, ö, ü, ß), counting Euros, cafes, and noun genders (der, die, das).",
+      title: "Foundations & Hello",
+      germanTitle: "Grundlagen & Hallo",
+      description: "Master German greetings, Umlauts (ä, ö, ü, ß), counting Euros, ordering at cafes, and noun genders (der, die, das).",
       completedCount: m1Completed,
       totalDays: 7,
       isCompleted: isM1Done,
-      badgeName: "Bronze Adler Zertifikat",
+      badgeName: "Bronze Eagle Certificate",
       badgeColor: "from-amber-600 to-amber-800",
       accentBorder: "border-amber-600/40",
       accentBg: "bg-amber-950/20",
       accentText: "text-amber-400",
-      bossTitle: "Tag 7 Prüfungs-Boss"
+      bossTitle: "Day 7 Checkpoint Exam"
     },
     {
       id: 2 as MilestoneId,
-      days: "Tag 8 – 15",
+      days: "Days 8 – 15",
       targetDay: 15,
       level: "A1.2",
-      title: "Alltag & Unterwegs",
-      subtitle: "Everyday Life & Practical Fluency",
+      title: "Everyday Life & Out and About",
+      germanTitle: "Alltag & Unterwegs",
       description: "Ask for directions, tell time, navigate supermarkets, dine like a local, and conquer the Accusative case (den, einen).",
       completedCount: m2Completed,
       totalDays: 8,
       isCompleted: isM2Done,
-      badgeName: "Silber Wappen Zertifikat",
+      badgeName: "Silver Coat-of-Arms Certificate",
       badgeColor: "from-slate-400 to-slate-600",
       accentBorder: "border-slate-400/40",
       accentBg: "bg-slate-800/40",
       accentText: "text-slate-300",
-      bossTitle: "Tag 15 Halbzeit-Boss"
+      bossTitle: "Day 15 Midterm Exam"
     },
     {
       id: 3 as MilestoneId,
-      days: "Tag 16 – 30",
+      days: "Days 16 – 30",
       targetDay: 30,
       level: "A2.1",
-      title: "Meisterschaft & Kultur",
-      subtitle: "Conversational Fluency & Culture",
-      description: "Modal verbs, public transit, Dative case, conversational past tense (Perfekt), separable verbs, and German cultural secrets.",
+      title: "Mastery & Culture",
+      germanTitle: "Meisterschaft & Kultur",
+      description: "Modal verbs, public transit, Dative case prepositions, conversational past tense (Perfekt), separable verbs, and German cultural secrets.",
       completedCount: m3Completed,
       totalDays: 15,
       isCompleted: isM3Done,
-      badgeName: "Gold Meister Krone Diplom",
+      badgeName: "Gold Master Crown Diploma",
       badgeColor: "from-yellow-400 to-amber-600",
       accentBorder: "border-amber-400/50",
       accentBg: "bg-amber-950/30",
       accentText: "text-amber-300",
-      bossTitle: "Tag 30 Abschluss-Prüfung"
+      bossTitle: "Day 30 Graduation Exam"
     }
   ];
 
@@ -91,17 +91,17 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
         <div className="relative z-10 max-w-3xl">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-              30-Tage Meilenstein-Struktur
+              30-Day Milestone Architecture
             </span>
             <span className="text-xs text-slate-400 font-medium">
               CEFR A1.1 → A2.1
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Dein strukturierter Weg zum fließenden Deutsch
+            Your Structured Path to German Fluency
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-300 leading-relaxed">
-            Aufgeteilt in 3 didaktisch optimierte Meilensteine mit gezielten Prüfungs-Checkpoints an <strong>Tag 7</strong>, <strong>Tag 15</strong> und dem großen Abschluss an <strong>Tag 30</strong>.
+            Divided into 3 pedagogically structured milestones with targeted checkpoint exams on <strong>Day 7</strong>, <strong>Day 15</strong>, and the final graduation on <strong>Day 30</strong>.
           </p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <span className="text-xs font-bold text-amber-400/90 tracking-wide uppercase">
-                      Meilenstein {m.id} • {m.days}
+                      Milestone {m.id} • {m.days}
                     </span>
                     <h3 className="text-xl font-bold text-white mt-0.5 flex items-center gap-2">
                       {m.title}
@@ -145,8 +145,8 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                   </span>
                 </div>
 
-                <p className="text-xs font-semibold text-slate-400 mb-2">
-                  {m.subtitle}
+                <p className="text-xs font-semibold text-amber-300/80 mb-2">
+                  German: {m.germanTitle}
                 </p>
 
                 <p className="text-xs text-slate-300/80 leading-relaxed mb-4">
@@ -156,8 +156,8 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                 {/* Progress bar */}
                 <div className="mt-4 pt-4 border-t border-slate-800">
                   <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                    <span className="text-slate-400">Fortschritt</span>
-                    <span className="text-white font-bold">{m.completedCount} von {m.totalDays} Tagen ({percent}%)</span>
+                    <span className="text-slate-400">Progress</span>
+                    <span className="text-white font-bold">{m.completedCount} of {m.totalDays} days ({percent}%)</span>
                   </div>
                   <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                     <div
@@ -182,7 +182,7 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                         {m.bossTitle}
                       </div>
                       <div className="text-[11px] text-slate-400">
-                        Freischaltung des Meilenstein-Zertifikats
+                        Unlocks official achievement certificate
                       </div>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                     }}
                     className="text-xs bg-slate-700 hover:bg-slate-600 text-amber-300 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 cursor-pointer"
                   >
-                    <span>Tag {m.targetDay}</span>
+                    <span>Day {m.targetDay}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -207,7 +207,7 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span>Meilenstein gemeistert!</span>
+                      <span>Milestone Mastered!</span>
                     </div>
                     <button
                       onClick={(e) => {
@@ -218,14 +218,14 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                       className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition cursor-pointer"
                     >
                       <Award className="w-3.5 h-3.5" />
-                      <span>Zertifikat ansehen</span>
+                      <span>View Certificate</span>
                     </button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-between w-full text-xs">
                     <span className="text-slate-400 flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{m.totalDays - m.completedCount} Tage verbleibend</span>
+                      <span>{m.totalDays - m.completedCount} day(s) remaining</span>
                     </span>
                     <button
                       onClick={(e) => {
@@ -235,7 +235,7 @@ export const MilestoneSelector: React.FC<MilestoneSelectorProps> = ({
                       }}
                       className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 transition"
                     >
-                      <span>Lektionen zeigen</span>
+                      <span>View Lessons</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>

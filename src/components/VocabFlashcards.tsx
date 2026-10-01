@@ -61,7 +61,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
   };
 
   if (!currentWord) {
-    return <div className="p-8 text-center text-slate-400">Keine Vokabeln gefunden.</div>;
+    return <div className="p-8 text-center text-slate-400">No vocabulary found.</div>;
   }
 
   const isMastered = progress.masteredVocab.includes(currentWord.de);
@@ -72,11 +72,11 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
-            <span>Wortschatz-Blitz</span>
+            <span>Vocabulary Flashcards</span>
             <Sparkles className="w-5 h-5 text-amber-400" />
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Interaktive Karteikarten mit nativer deutscher Sprachausgabe.
+            Spaced repetition flashcards with native German audio pronunciation.
           </p>
         </div>
 
@@ -84,15 +84,15 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
         <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl text-xs">
           <button
             onClick={() => { sounds.playClick(); setSelectedMilestone('all'); setCurrentIndex(0); }}
-            className={`px-2.5 py-1 rounded-lg font-bold transition ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               selectedMilestone === 'all' ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'
             }`}
           >
-            Alle
+            All
           </button>
           <button
             onClick={() => { sounds.playClick(); setSelectedMilestone(1); setCurrentIndex(0); }}
-            className={`px-2.5 py-1 rounded-lg font-bold transition ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               selectedMilestone === 1 ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -100,7 +100,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
           </button>
           <button
             onClick={() => { sounds.playClick(); setSelectedMilestone(2); setCurrentIndex(0); }}
-            className={`px-2.5 py-1 rounded-lg font-bold transition ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               selectedMilestone === 2 ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -108,7 +108,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
           </button>
           <button
             onClick={() => { sounds.playClick(); setSelectedMilestone(3); setCurrentIndex(0); }}
-            className={`px-2.5 py-1 rounded-lg font-bold transition ${
+            className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
               selectedMilestone === 3 ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -119,10 +119,10 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
 
       {/* Progress Counter */}
       <div className="flex items-center justify-between text-xs text-slate-400 mb-3 font-semibold">
-        <span>Karte {currentIndex + 1} von {allVocab.length}</span>
+        <span>Card {currentIndex + 1} of {allVocab.length}</span>
         <span className="text-emerald-400 font-bold flex items-center gap-1">
           <Check className="w-3.5 h-3.5" />
-          <span>{progress.masteredVocab.length} Vokabeln gemeistert</span>
+          <span>{progress.masteredVocab.length} words mastered</span>
         </span>
       </div>
 
@@ -135,7 +135,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs font-black uppercase bg-slate-800 text-amber-400 px-2 py-0.5 rounded-md border border-slate-700">
-              Tag {currentWord.day}
+              Day {currentWord.day}
             </span>
             {currentWord.gender && (
               <span className={`text-xs font-extrabold px-2 py-0.5 rounded-md uppercase ${
@@ -153,14 +153,14 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
           <div className="flex items-center gap-2">
             <button
               onClick={(e) => handleSpeak(e, currentWord.de)}
-              title="Aussprache anhören"
+              title="Listen to German pronunciation"
               className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition cursor-pointer"
             >
               <Volume2 className="w-4 h-4" />
             </button>
             <div className="text-xs text-slate-500 flex items-center gap-1 group-hover:text-slate-400">
               <RotateCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Umdrehen</span>
+              <span className="hidden sm:inline">Flip</span>
             </div>
           </div>
         </div>
@@ -174,14 +174,14 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
                 {currentWord.de}
               </h3>
               <p className="text-xs text-slate-400 mt-2 font-medium">
-                Tippe zum Aufdecken der Übersetzung
+                Tap card to reveal English translation
               </p>
             </div>
           ) : (
             /* Back: English Translation & Example */
             <div className="animate-in fade-in zoom-in-95 duration-150">
               <div className="text-xs uppercase font-extrabold tracking-wider text-amber-400 mb-1">
-                Bedeutung
+                English Meaning
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
                 {currentWord.en}
@@ -201,11 +201,11 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
 
         {/* Card Bottom status */}
         <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/80">
-          <span>Klicke auf die Karte zum Wenden</span>
+          <span>Click or tap to flip card</span>
           {isMastered && (
             <span className="text-emerald-400 font-bold flex items-center gap-1">
               <Check className="w-3.5 h-3.5" />
-              <span>Bereits gemerkt</span>
+              <span>Mastered</span>
             </span>
           )}
         </div>
@@ -218,7 +218,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
           className="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer"
         >
           <RotateCw className="w-4 h-4 text-slate-400" />
-          <span>Noch üben</span>
+          <span>Still Practicing</span>
         </button>
 
         <button
@@ -226,7 +226,7 @@ export const VocabFlashcards: React.FC<VocabFlashcardsProps> = ({ progress, onMa
           className="py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-extrabold text-xs sm:text-sm transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer"
         >
           <Check className="w-4 h-4" />
-          <span>Als gemeistert markieren (+10 XP)</span>
+          <span>Mark as Mastered (+10 XP)</span>
         </button>
       </div>
     </div>

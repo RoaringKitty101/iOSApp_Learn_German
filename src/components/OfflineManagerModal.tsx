@@ -13,6 +13,7 @@ import {
 import { UserProgress } from '../types';
 import { cacheCurriculumOffline } from '../utils/storage';
 import { sounds } from '../utils/audio';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface OfflineManagerModalProps {
   isOffline: boolean;
@@ -60,16 +61,16 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
             </div>
             <div>
               <h3 className="font-extrabold text-white text-base">
-                Offline-Modus & Speicher
+                Offline Mode & Storage
               </h3>
               <p className="text-xs text-slate-400">
-                Lerne auch im Flugzeug oder ohne Internetverbindung
+                Continue learning on flights or without internet connection
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
+            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -87,12 +88,12 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
               </div>
               <div>
                 <div className="font-bold text-white text-sm">
-                  {isOffline ? 'Offline-Modus aktiv' : 'Online-Modus aktiv'}
+                  {isOffline ? 'Offline Mode Active' : 'Online Mode Active'}
                 </div>
                 <div className="text-xs text-slate-400">
                   {isOffline 
-                    ? 'Fortschritte werden lokal gespeichert und später synchronisiert' 
-                    : 'Verbunden & live mit Bestenliste synchronisiert'}
+                    ? 'Lessons saved locally; progress queues for sync' 
+                    : 'Connected & syncing live with social leaderboard'}
                 </div>
               </div>
             </div>
@@ -118,19 +119,19 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
             <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
               <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold mb-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Gespeichert</span>
+                <span>Cached</span>
               </div>
               <div className="text-xl font-black text-white">30 / 30</div>
-              <div className="text-[11px] text-slate-400">Tage im Offline-Cache</div>
+              <div className="text-[11px] text-slate-400">Days saved offline</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
               <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold mb-1">
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Warteschlange</span>
+                <span>Sync Queue</span>
               </div>
               <div className="text-xl font-black text-white">{pendingQueueCount}</div>
-              <div className="text-[11px] text-slate-400">Offline-Aktionen zur Sync</div>
+              <div className="text-[11px] text-slate-400">Offline actions queued</div>
             </div>
           </div>
 
@@ -138,16 +139,16 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
           {pendingQueueCount > 0 && (
             <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center justify-between">
               <span className="text-xs text-amber-300 font-medium">
-                {pendingQueueCount} lokal absolvierte Lektion(en) bereit zum Synchronisieren.
+                {pendingQueueCount} completed lesson(s) ready to sync.
               </span>
               <button
                 onClick={() => {
                   sounds.playSuccess();
                   onSyncOfflineQueue();
                 }}
-                className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition"
+                className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition cursor-pointer"
               >
-                Jetzt syncen
+                Sync Now
               </button>
             </div>
           )}
@@ -161,26 +162,40 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
             {downloading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin text-amber-400" />
-                <span>Lektionen werden im Cache gesichert...</span>
+                <span>Saving lessons to offline cache...</span>
               </>
             ) : downloadSuccess ? (
               <>
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Erfolgreich offline gespeichert!</span>
+                <span>Successfully cached offline!</span>
               </>
             ) : (
               <>
                 <HardDriveDownload className="w-4 h-4 text-amber-400" />
-                <span>Gesamten 30-Tage Plan jetzt offline absichern</span>
+                <span>Ensure Full 30-Day Plan Is Cached Offline</span>
               </>
             )}
           </button>
+
+          {/* PWA App Installation Box */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-slate-800 to-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Install PWA on iOS or Android</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-0.5">
+                Launches directly from home screen with full-screen experience.
+              </div>
+            </div>
+            <PWAInstallButton />
+          </div>
 
           {/* Informational tip */}
           <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
             <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
             <span>
-              Die deutsche Sprachausgabe verwendet die im Browser integrierte Sprachsynthese und funktioniert auch ohne Internetverbindung.
+              German native pronunciation uses your device's built-in Web Speech synthesis engine and operates completely offline without data usage.
             </span>
           </div>
         </div>
@@ -191,7 +206,7 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition cursor-pointer"
           >
-            Fertig
+            Done
           </button>
         </div>
       </div>

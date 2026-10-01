@@ -34,7 +34,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
       if (u.isUser) {
         return {
           ...u,
-          name: `${progress.userName} (Du)`,
+          name: `${progress.userName} (You)`,
           xp: progress.totalXp,
           streak: progress.currentStreak,
           avatar: progress.avatar
@@ -68,33 +68,33 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30 flex items-center gap-1.5">
                 <Trophy className="w-3.5 h-3.5" />
-                <span>Wöchentliche Deutsch-Liga</span>
+                <span>Weekly German League</span>
               </span>
               <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
-                <span>Endet in 3 Tagen 14 Std.</span>
+                <span>Ends in 3d 14h</span>
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-              <span>{activeLeague} Liga</span>
+              <span>{activeLeague} League</span>
               <Crown className="w-6 h-6 text-amber-400" />
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-slate-300">
-              Lerne täglich, sammle XP und steige in die nächste Liga auf! Die Top 3 steigen auf.
+              Study daily, earn XP, and climb to higher leagues! The top 3 learners get promoted.
             </p>
           </div>
 
           {/* User's position summary */}
           <div className="bg-slate-950/70 border border-slate-700/60 p-4 rounded-2xl shrink-0 flex items-center gap-4">
             <div className="text-center">
-              <div className="text-xs text-slate-400 font-medium">Dein Rang</div>
+              <div className="text-xs text-slate-400 font-medium">Your Rank</div>
               <div className="text-2xl font-black text-amber-400 mt-0.5">
                 #{rankings.find(u => u.isUser)?.rank || 4}
               </div>
             </div>
             <div className="h-8 w-px bg-slate-800" />
             <div className="text-center">
-              <div className="text-xs text-slate-400 font-medium">Deine XP</div>
+              <div className="text-xs text-slate-400 font-medium">Your XP</div>
               <div className="text-2xl font-black text-emerald-400 mt-0.5">
                 {progress.totalXp}
               </div>
@@ -118,7 +118,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
             <span>{league}</span>
             {league === progress.currentLeague && (
               <span className="text-[10px] bg-slate-950/30 text-slate-950 px-1.5 py-0.2 rounded font-extrabold">
-                Aktiv
+                Active
               </span>
             )}
           </button>
@@ -129,7 +129,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
       <div className="mb-3 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-xs text-emerald-300 flex items-center justify-between">
         <div className="flex items-center gap-1.5 font-bold">
           <ArrowUp className="w-4 h-4 text-emerald-400" />
-          <span>Aufstiegszone (Ränge 1 – 3 steigen in die nächste Liga auf)</span>
+          <span>Promotion Zone (Top 3 learners advance to the next league tier)</span>
         </div>
         <span className="text-[11px] text-emerald-400/80 font-medium">Top 3</span>
       </div>
@@ -189,7 +189,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
                     </span>
                     {isUser && (
                       <span className="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded shrink-0">
-                        Du
+                        You
                       </span>
                     )}
                   </div>
@@ -197,7 +197,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
                   <div className="flex items-center gap-3 text-xs text-slate-400 font-medium mt-0.5">
                     <span className="flex items-center gap-1 text-amber-400/90 font-bold">
                       <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-400" />
-                      <span>{user.streak} Tage Serie</span>
+                      <span>{user.streak} Day Streak</span>
                     </span>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
                     <span>{user.xp} XP</span>
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    diese Woche
+                    this week
                   </div>
                 </div>
 
@@ -225,12 +225,12 @@ export const SocialLeaderboard: React.FC<SocialLeaderboardProps> = ({ progress }
                       </span>
                     ) : (
                       <button
-                        onClick={() => handleCheer(user.id, "Glückwunsch! 🎉")}
-                        title="Glückwunsch senden"
+                        onClick={() => handleCheer(user.id, "Kudos! 🎉")}
+                        title="Send encouragement"
                         className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-amber-300 transition cursor-pointer flex items-center gap-1 text-xs font-bold"
                       >
                         <HeartHandshake className="w-3.5 h-3.5 text-amber-400" />
-                        <span className="hidden sm:inline">Anfeuern</span>
+                        <span className="hidden sm:inline">Cheer</span>
                       </button>
                     )}
                   </div>

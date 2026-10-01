@@ -17,26 +17,29 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
   const milestoneDetails = {
     1: {
       badge: "🥉",
-      tier: "Meilenstein 1 (Tag 1 – 7)",
-      title: "Zertifikat: Grundlagen & Überleben (A1.1)",
-      cefr: "A1.1 Elementare Sprachverwendung",
-      description: "Erfolgreicher Abschluss von Begrüßungen, Alphabet, Zahlen 1–100, Nomen-Geschlechtern (der/die/das) und Höflichkeitsformen im Café.",
+      tier: "Milestone 1 (Days 1 – 7)",
+      title: "Foundations & Daily Survival (A1.1)",
+      germanTitle: "Zertifikat: Grundlagen & Überleben (A1.1)",
+      cefr: "A1.1 Beginner German Proficiency",
+      description: "Successful mastery of greetings, alphabet & Umlauts (ä, ö, ü, ß), numbers 1–100, noun genders (der, die, das), and polite cafe ordering.",
       badgeColor: "from-amber-600 via-yellow-600 to-amber-700"
     },
     2: {
       badge: "🥈",
-      tier: "Meilenstein 2 (Tag 8 – 15)",
-      title: "Zertifikat: Alltag & Praktische Konversation (A1.2)",
-      cefr: "A1.2 Alltagssouveränität",
-      description: "Erfolgreicher Abschluss von Wegbeschreibungen, Uhrzeiten, Einkaufen im Supermarkt, deutscher Esskultur und dem Akkusativ (den/die/das/einen).",
+      tier: "Milestone 2 (Days 8 – 15)",
+      title: "Everyday Life & Practical Fluency (A1.2)",
+      germanTitle: "Zertifikat: Alltag & Praktische Konversation (A1.2)",
+      cefr: "A1.2 Elementary Everyday Fluency",
+      description: "Successful mastery of asking directions, telling time, supermarket navigation, dining like a local, and the Accusative case (den, die, das, einen).",
       badgeColor: "from-slate-300 via-slate-400 to-slate-500"
     },
     3: {
       badge: "👑",
-      tier: "Meilenstein 3 (Tag 16 – 30)",
-      title: "Abschluss-Diplom: 30-Tage Deutsch-Meisterschaft (A2.1)",
-      cefr: "A2.1 Selbstständige Sprachverwendung",
-      description: "Vollständige Meisterschaft des 30-Tage Meisterplans: Dativ-Präpositionen, Modalverben, Perfekt-Vergangenheitsform, trennbare Verben, Nebensätze mit 'weil' und deutsche Kulturtraditionen.",
+      tier: "Milestone 3 (Days 16 – 30)",
+      title: "30-Day German Mastery Diploma (A2.1)",
+      germanTitle: "Abschluss-Diplom: 30-Tage Deutsch-Meisterschaft (A2.1)",
+      cefr: "A2.1 Independent Conversational German",
+      description: "Complete graduation of the 30-Day German Plan: Dative case prepositions, modal verbs, conversational past tense (Perfekt), separable verbs, subordinate clauses with 'weil', and German cultural traditions.",
       badgeColor: "from-amber-400 via-yellow-400 to-amber-600"
     }
   }[milestoneId];
@@ -55,12 +58,12 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-amber-400" />
             <span className="font-extrabold text-white text-sm">
-              Offizielles Meilenstein-Zertifikat
+              Official Milestone Achievement Certificate
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
+            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -86,13 +89,13 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 
             <div className="text-center">
               <span className="text-[11px] font-black uppercase tracking-widest text-amber-800 block">
-                Deutsch30 • Akademie für Deutsche Sprache
+                Deutsch30 • German Language Academy
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tracking-tight font-serif">
-                URKUNDE & ZERTIFIKAT
+                CERTIFICATE OF ACHIEVEMENT
               </h2>
               <div className="text-xs text-slate-600 font-semibold mt-1">
-                Hiermit wird offiziell bescheinigt, dass
+                This is proudly presented to
               </div>
 
               {/* Recipient Name */}
@@ -101,19 +104,19 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               </div>
 
               <div className="text-xs text-slate-700 max-w-md mx-auto leading-relaxed">
-                den <strong>{milestoneDetails.title}</strong> mit herausragendem Erfolg und kontinuierlicher Ausdauer absolviert hat.
+                for outstanding dedication and successfully completing <strong>{milestoneDetails.title}</strong> ({milestoneDetails.germanTitle}).
               </div>
 
               {/* Level Seal & Details */}
               <div className="mt-5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-around gap-4 text-left">
                 <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-800">Erreichte Stufe</div>
+                  <div className="text-[10px] uppercase font-bold text-amber-800">Achieved Level</div>
                   <div className="text-xs font-black text-slate-900">{milestoneDetails.cefr}</div>
                 </div>
                 <div className="h-6 w-px bg-amber-300" />
                 <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-800">Ausstellungsdatum</div>
-                  <div className="text-xs font-black text-slate-900">{new Date().toLocaleDateString('de-DE')}</div>
+                  <div className="text-[10px] uppercase font-bold text-amber-800">Date Issued</div>
+                  <div className="text-xs font-black text-slate-900">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 </div>
               </div>
 
@@ -121,7 +124,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               <div className="mt-6 flex items-center justify-between pt-4 border-t border-amber-700/20 text-xs">
                 <div className="text-left">
                   <div className="font-serif italic font-bold text-slate-800">Dr. Markus von Berg</div>
-                  <div className="text-[10px] text-slate-600">Leitung Didaktik & Curriculum</div>
+                  <div className="text-[10px] text-slate-600">Director of German Curriculum</div>
                 </div>
 
                 <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xl shadow-md border-2 border-amber-300">
@@ -131,7 +134,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                 <div className="text-right">
                   <div className="font-bold text-emerald-800 flex items-center gap-1 justify-end">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Verifiziert</span>
+                    <span>Verified</span>
                   </div>
                   <div className="text-[10px] text-slate-500">ID: DE-30-M{milestoneId}</div>
                 </div>
@@ -143,7 +146,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
         {/* Footer actions */}
         <div className="p-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between gap-3">
           <span className="text-xs text-slate-400">
-            Meilenstein {milestoneId} von 3
+            Milestone {milestoneId} of 3
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -151,13 +154,13 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Drucken / PDF</span>
+              <span>Print / PDF</span>
             </button>
             <button
               onClick={onClose}
               className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition cursor-pointer"
             >
-              Schließen
+              Close
             </button>
           </div>
         </div>

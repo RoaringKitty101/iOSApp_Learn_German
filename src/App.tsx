@@ -95,13 +95,25 @@ export default function App() {
       });
     }
 
+    const todayStr = new Date().toISOString().split('T')[0];
+    const prevTodayActivity = progress.dailyActivity?.[todayStr] || { xp: 0, lessons: 0, minutes: 0 };
+    const updatedDailyActivity = {
+      ...(progress.dailyActivity || {}),
+      [todayStr]: {
+        xp: prevTodayActivity.xp + xpEarned,
+        lessons: prevTodayActivity.lessons + 1,
+        minutes: prevTodayActivity.minutes + 15
+      }
+    };
+
     const updatedProgress: UserProgress = {
       ...progress,
       completedDays: updatedCompletedDays,
       totalXp: updatedXp,
       currentStreak: isNewDay ? progress.currentStreak + 1 : progress.currentStreak,
-      lastActiveDate: new Date().toISOString().split('T')[0],
-      offlineSyncQueue: updatedQueue
+      lastActiveDate: todayStr,
+      offlineSyncQueue: updatedQueue,
+      dailyActivity: updatedDailyActivity
     };
 
     setProgress(updatedProgress);

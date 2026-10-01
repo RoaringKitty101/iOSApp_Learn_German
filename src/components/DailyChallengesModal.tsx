@@ -26,16 +26,16 @@ export const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({
             </div>
             <div>
               <h3 className="font-extrabold text-white text-base">
-                Tägliche Herausforderungen
+                Daily Challenges
               </h3>
               <p className="text-xs text-slate-400">
-                Setzt sich jeden Tag um Mitternacht zurück
+                Resets every day at midnight
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
+            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +88,7 @@ export const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({
                 <div className="mt-3 flex items-center justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex justify-between text-[11px] text-slate-400 mb-1 font-semibold">
-                      <span>Fortschritt</span>
+                      <span>Progress</span>
                       <span>{ch.current} / {ch.target}</span>
                     </div>
                     <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -104,7 +104,7 @@ export const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({
                   {ch.claimed ? (
                     <span className="text-xs font-bold text-slate-500 flex items-center gap-1 px-3 py-1">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                      <span>Eingelöst</span>
+                      <span>Claimed</span>
                     </span>
                   ) : isFinished ? (
                     <button
@@ -115,11 +115,11 @@ export const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({
                       className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-extrabold text-xs shadow-md transition cursor-pointer flex items-center gap-1"
                     >
                       <Gift className="w-3.5 h-3.5" />
-                      <span>Belohnung abholen</span>
+                      <span>Claim Reward</span>
                     </button>
                   ) : (
                     <span className="text-xs font-semibold text-slate-500 px-2 py-1">
-                      Offen
+                      In Progress
                     </span>
                   )}
                 </div>
@@ -134,7 +134,7 @@ export const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({
             onClick={onClose}
             className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition cursor-pointer"
           >
-            Schließen
+            Close
           </button>
         </div>
       </div>
